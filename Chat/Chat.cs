@@ -20,6 +20,7 @@ namespace Chat {
 		}
 
 		private void connect_Click(object sender, EventArgs e) {
+			SetButtons(true, connect, disconnect, sendMessage);
 			try {
 				var parsed = remoteIp.Text.Split(':');
 				status.Visible = true;
@@ -65,6 +66,8 @@ namespace Chat {
 
 		private void disconnect_Click(object sender, EventArgs e) {
 			CloseConnection();
+			SetButtons(true, connect, disconnect, sendMessage);
+			status.Text = "Disconnected";
 		}
 
 		private void remoteIp_KeyPress(object sender, KeyPressEventArgs e) {
@@ -99,6 +102,18 @@ namespace Chat {
 
 		private Socket SocketStream() {
 			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		}
+
+		private void SetButtons(bool enabled, Button connect, Button disconnect, Button sendMessage) {
+			if (enabled) {
+				disconnect.Enabled = true;
+				sendMessage.Enabled = true;
+				connect.Enabled = false;
+			} else {
+				connect.Enabled = true;
+				sendMessage.Enabled = false;
+				disconnect.Enabled = false;
+			}
 		}
     }
 }
