@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Chat {
@@ -32,7 +33,7 @@ namespace Chat {
 					return;
 				}
 
-				client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				client = SocketStream();
 				var remoteEndPoint = new IPEndPoint(IPAddress.Parse(remote), port);
 				client.BeginConnect(remoteEndPoint, new AsyncCallback(OnConnected), null);
 
@@ -42,7 +43,17 @@ namespace Chat {
 		}
 
 		private void startServer_Click(object sender, EventArgs e) {
+			server = SocketStream();
+			var port = int.Parse(localPort.Text);
 
+			var localEndPoint = new IPEndPoint(0, port);
+			server.Bind(localEndPoint);
+			server.Listen(10);
+
+			server.BeginAccept(new AsyncCallback(OnClientConnected), null);
+			startServer.Enabled = false;
+			status.Visible = true;
+			status.Text = $"Listenting for connections on port {port}";
 		}
 
 		private void sendMessage_Click(object sender, EventArgs e) {
@@ -57,11 +68,15 @@ namespace Chat {
 		}
 
 		private void remoteIp_KeyPress(object sender, KeyPressEventArgs e) {
-
+			if (Regex.IsMatch(e.KeyChar.ToString(), @"[^0-9.:\b]")) {
+				e.Handled = true;
+			}
 		}
 
 		private void localPort_KeyPress(object sender, KeyPressEventArgs e) {
-
+			if(Regex.IsMatch(e.KeyChar.ToString(), @"[^0-9\b]")) {
+				e.Handled = true;
+			}
 		}
 
 		private void CloseConnection() {
@@ -76,6 +91,14 @@ namespace Chat {
 
 		private void OnConnected(IAsyncResult result) {
 
+		}
+
+		private void OnClientConnected(IAsyncResult result) {
+
+		}
+
+		private Socket SocketStream() {
+			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
     }
 }
