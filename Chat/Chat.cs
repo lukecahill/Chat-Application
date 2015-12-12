@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -88,6 +89,19 @@ namespace Chat {
 			}
 		}
 
+		private void helpToolStripMenuItem_Click(object sender, EventArgs e) {
+			MessageBox.Show("To use enter the IP, and port under the connect to header. This should be in the format of IPADDRESS:PORT; e.g. 127.0.0.1:1024.\n\nUnder the bind to port header enter the local port that the remote client should connect to, and the chat will then bind to that port and listen for incoming connections.", "Help");
+		}
+
+		private void newToolStripMenuItem_Click(object sender, EventArgs e) {
+			var info = new ProcessStartInfo(Application.ExecutablePath);
+			Process.Start(info);
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+			Environment.Exit(0);
+		}
+
 		private void CloseConnection() {
 			if (client.Connected) {
 				client.Close();
@@ -106,8 +120,8 @@ namespace Chat {
 				var sent = client.EndReceive(result);
 				client.BeginReceive(data, 0, data.Length, SocketFlags.None, new AsyncCallback(OnDataReceived), null);
 				messageList.Items.Add(Message.Text);
-			} catch (SocketException e) {
-				System.Diagnostics.Debug.WriteLine(e);
+			} catch (SocketException ex) {
+				Debug.WriteLine(ex);
 				status.Text = "There was an error while attempting to send the data.";
 				CloseConnection();
 			}
@@ -118,7 +132,7 @@ namespace Chat {
 				client.EndConnect(result);
 				status.Text = $"Connected to: {client.RemoteEndPoint}";
 				client.BeginReceive(data, 0, 1024, SocketFlags.None, new AsyncCallback(OnDataReceived), null);
-			} catch (SocketException) {
+			} catch (SocketException ex) {
 				status.Text = $"Could not connect to {remoteIp.Text}";
 			}
 		}
@@ -149,5 +163,5 @@ namespace Chat {
 				disconnect.Enabled = false;
 			}
 		}
-    }
+	}
 }
