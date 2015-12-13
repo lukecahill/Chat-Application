@@ -13,7 +13,6 @@ namespace Chat {
 		private byte[] receivedData = new byte[1024];
 		private Socket client;
 		private Socket server;
-		private Socket remoteClient;
 
 		/// <summary>
 		/// Initialise the form.
@@ -29,7 +28,7 @@ namespace Chat {
 		/// <param name="sender">Button Object</param>
 		/// <param name="e">EventArgs arguments of the event</param>
 		private void connect_Click(object sender, EventArgs e) {
-			SetButtons(true, connect, disconnect, sendMessage);
+			SetButtons(true);
 			try {
 
 				if(!remoteIp.Text.Contains(":")) {
@@ -100,7 +99,7 @@ namespace Chat {
 		/// <param name="e">EventArgs of the button</param>
 		private void disconnect_Click(object sender, EventArgs e) {
 			CloseConnection();
-			SetButtons(true, connect, disconnect, sendMessage);
+			SetButtons(true);
 			status.Text = "Disconnected";
 		}
 
@@ -156,6 +155,8 @@ namespace Chat {
 			if (client.Connected) {
 				client.Close();
 			}
+
+			SetButtons(false);
 		}
 
 		/// <summary>
@@ -195,6 +196,7 @@ namespace Chat {
 				client.BeginReceive(data, 0, 1024, SocketFlags.None, new AsyncCallback(OnDataReceived), null);
 			} catch (SocketException ex) {
 				status.Text = $"Could not connect to {remoteIp.Text}";
+				Debug.WriteLine(ex.Message);
 			}
 		}
 
@@ -217,7 +219,7 @@ namespace Chat {
 			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		}
 
-		private void SetButtons(bool enabled, Button connect, Button disconnect, Button sendMessage) {
+		private void SetButtons(bool enabled) {
 			if (enabled) {
 				disconnect.Enabled = true;
 				sendMessage.Enabled = true;
