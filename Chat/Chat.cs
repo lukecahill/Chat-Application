@@ -99,7 +99,7 @@ namespace Chat {
 		/// <param name="e">EventArgs of the button</param>
 		private void disconnect_Click(object sender, EventArgs e) {
 			CloseConnection();
-			SetButtons(true);
+			SetButtons(false);
 			status.Text = "Disconnected";
 		}
 
@@ -211,7 +211,7 @@ namespace Chat {
 				var message = Encoding.ASCII.GetString(data, 0, data.Length);
 				messageList.Items.Add(message);
 			} catch {
-				status.Text = $"There was an error while receiving the data.";
+				// handle this
 			}
 		}
 
