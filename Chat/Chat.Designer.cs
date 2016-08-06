@@ -39,6 +39,7 @@
 			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.stopListeningButton = new System.Windows.Forms.Button();
 			this.localGroup.SuspendLayout();
 			this.remoteConnectGroup.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
@@ -73,11 +74,11 @@
 			// disconnect
 			// 
 			this.disconnect.Enabled = false;
-			this.disconnect.Location = new System.Drawing.Point(288, 369);
+			this.disconnect.Location = new System.Drawing.Point(239, 369);
 			this.disconnect.Name = "disconnect";
-			this.disconnect.Size = new System.Drawing.Size(75, 23);
+			this.disconnect.Size = new System.Drawing.Size(124, 23);
 			this.disconnect.TabIndex = 14;
-			this.disconnect.Text = "Disconnect";
+			this.disconnect.Text = "Disconnect from client";
 			this.disconnect.UseVisualStyleBackColor = true;
 			this.disconnect.Click += new System.EventHandler(this.disconnect_Click);
 			// 
@@ -99,6 +100,7 @@
 			this.Message.Name = "Message";
 			this.Message.Size = new System.Drawing.Size(274, 41);
 			this.Message.TabIndex = 12;
+			this.Message.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Message_KeyUp);
 			// 
 			// connect
 			// 
@@ -122,9 +124,9 @@
 			// 
 			// startServer
 			// 
-			this.startServer.Location = new System.Drawing.Point(30, 51);
+			this.startServer.Location = new System.Drawing.Point(6, 51);
 			this.startServer.Name = "startServer";
-			this.startServer.Size = new System.Drawing.Size(100, 23);
+			this.startServer.Size = new System.Drawing.Size(68, 23);
 			this.startServer.TabIndex = 8;
 			this.startServer.Text = "Listen";
 			this.startServer.UseVisualStyleBackColor = true;
@@ -132,6 +134,7 @@
 			// 
 			// localGroup
 			// 
+			this.localGroup.Controls.Add(this.stopListeningButton);
 			this.localGroup.Controls.Add(this.startServer);
 			this.localGroup.Controls.Add(this.localPort);
 			this.localGroup.Location = new System.Drawing.Point(209, 27);
@@ -175,14 +178,14 @@
 			// newToolStripMenuItem
 			// 
 			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-			this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
 			this.newToolStripMenuItem.Text = "&New";
 			this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
 			this.exitToolStripMenuItem.Text = "&Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -192,6 +195,16 @@
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this.helpToolStripMenuItem.Text = "Help";
 			this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+			// 
+			// stopListeningButton
+			// 
+			this.stopListeningButton.Location = new System.Drawing.Point(80, 51);
+			this.stopListeningButton.Name = "stopListeningButton";
+			this.stopListeningButton.Size = new System.Drawing.Size(68, 23);
+			this.stopListeningButton.TabIndex = 9;
+			this.stopListeningButton.Text = "Stop";
+			this.stopListeningButton.UseVisualStyleBackColor = true;
+			this.stopListeningButton.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// chatForm
 			// 
@@ -240,6 +253,7 @@
 		private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+		private System.Windows.Forms.Button stopListeningButton;
 	}
 }
 

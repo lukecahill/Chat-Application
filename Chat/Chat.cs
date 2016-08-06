@@ -9,10 +9,13 @@ using System.Windows.Forms;
 namespace Chat {
 	public partial class chatForm : Form {
 
+		private Utilities utilities = new Utilities();
+
 		private byte[] data = new byte[1024];
 		private byte[] receivedData = new byte[1024];
 		private Socket client;
 		private Socket server;
+		private int wordCount = 0;
 
 		/// <summary>
 		/// Initialise the form.
@@ -20,6 +23,7 @@ namespace Chat {
 		public chatForm() {
 			InitializeComponent();
 			CheckForIllegalCrossThreadCalls = false;
+			stopListeningButton.Enabled = false;
 		}
 
 		/// <summary>
@@ -28,7 +32,7 @@ namespace Chat {
 		/// <param name="sender">Button Object</param>
 		/// <param name="e">EventArgs arguments of the event</param>
 		private void connect_Click(object sender, EventArgs e) {
-			SetButtons(true);
+			utilities.SetButton(true, connect, disconnect, sendMessage);
 			try {
 
 				if(!remoteIp.Text.Contains(":")) {
@@ -36,7 +40,7 @@ namespace Chat {
 					return;
 				}
 
-				var parsed = remoteIp.Text.Split(':');
+				var parsed = utilities.ReturnParsedIpPort(remoteIp.Text);
 				status.Visible = true;
 				status.Text = $"Connecting to {remoteIp.Text}";
 
@@ -48,7 +52,7 @@ namespace Chat {
 					return;
 				}
 
-				client = CreateSocketStream();
+				client = utilities.SocketStream();
 				var remoteEndPoint = new IPEndPoint(IPAddress.Parse(remote), port);
 				client.BeginConnect(remoteEndPoint, new AsyncCallback(OnConnected), null);
 
@@ -63,7 +67,7 @@ namespace Chat {
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void startServer_Click(object sender, EventArgs e) {
-			server = CreateSocketStream();
+			server = utilities.SocketStream();
 			if(Regex.IsMatch(localPort.Text, @"[^0-9]")) {
 				MessageBox.Show("Local port must be numbers only!");
 				return;
@@ -76,6 +80,7 @@ namespace Chat {
 
 			server.BeginAccept(new AsyncCallback(OnClientConnected), null);
 			startServer.Enabled = false;
+			stopListeningButton.Enabled = true;
 			status.Visible = true;
 			status.Text = $"Listenting for connections on port {port}";
 		}
@@ -99,7 +104,7 @@ namespace Chat {
 		/// <param name="e">EventArgs of the button</param>
 		private void disconnect_Click(object sender, EventArgs e) {
 			CloseConnection();
-			SetButtons(false);
+			utilities.SetButton(false, connect, disconnect, sendMessage);
 			status.Text = "Disconnected";
 		}
 
@@ -136,8 +141,7 @@ namespace Chat {
 		/// Start a new instance of the chat.
 		/// </summary>
 		private void newToolStripMenuItem_Click(object sender, EventArgs e) {
-			var info = new ProcessStartInfo(Application.ExecutablePath);
-			Process.Start(info);
+			utilities.StartNew();
 		}
 
 		/// <summary>
@@ -156,7 +160,7 @@ namespace Chat {
 				client.Close();
 			}
 
-			SetButtons(false);
+			utilities.SetButton(false, connect, disconnect, sendMessage);
 		}
 
 		/// <summary>
@@ -215,19 +219,22 @@ namespace Chat {
 			}
 		}
 
-		private Socket CreateSocketStream() {
-			return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		private void Message_KeyUp(object sender, KeyEventArgs e) {
+			if (wordCount > 1023) {
+				MessageBox.Show("The maximum word count is 1024", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			wordCount++;
 		}
 
-		private void SetButtons(bool enabled) {
-			if (enabled) {
-				disconnect.Enabled = true;
-				sendMessage.Enabled = true;
-				connect.Enabled = false;
-			} else {
-				connect.Enabled = true;
-				sendMessage.Enabled = false;
-				disconnect.Enabled = false;
+		private void button1_Click(object sender, EventArgs e) {
+			utilities.SetButton(false, connect, disconnect, sendMessage);
+			startServer.Enabled = true;
+			localPort.Enabled = true;
+			stopListeningButton.Enabled = false;
+
+			if(server.Connected) {
+				server.Close();
 			}
 		}
 	}
