@@ -168,9 +168,13 @@ namespace Chat {
 		/// </summary>
 		/// <param name="result">IAsyncResult</param>
 		private void OnClientConnected(IAsyncResult result) {
-			client = server.EndAccept(result);
-			status.Text = $"Connected to: {remoteIp.Text}";
-			client.BeginReceive(data, 0, data.Length, SocketFlags.None, new AsyncCallback(OnDataReceived), null);
+			try {
+				client = server.EndAccept(result);
+				status.Text = $"Connected to: {remoteIp.Text}";
+				client.BeginReceive(data, 0, data.Length, SocketFlags.None, new AsyncCallback(OnDataReceived), null);
+			} catch {
+				// something here to handle
+			}
 		}
 
 		/// <summary>
@@ -232,10 +236,7 @@ namespace Chat {
 			startServer.Enabled = true;
 			localPort.Enabled = true;
 			stopListeningButton.Enabled = false;
-
-			if(server.Connected) {
-				server.Close();
-			}
+			server.Dispose();
 		}
 	}
 }
